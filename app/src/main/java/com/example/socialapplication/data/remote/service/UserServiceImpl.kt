@@ -45,14 +45,6 @@ class UserServiceImpl(
         avatarByteArray: ByteArray
     ): Resource<Any> {
 
-        // 更换头像
-//        val upload: String = client.put("http://172.21.144.218:8008/bytes?username=$username"){
-//            body = avatarByteArray
-//            headers  {
-//                append(HttpHeaders.ContentType, "image/png")
-//            }
-//        }
-
         return try {
             val response = client.post<BaseModel<UserDto>>(UserService.EndPoint.UserRegister.url +
                     "?username=$username" +
@@ -92,6 +84,17 @@ class UserServiceImpl(
         }
 
         return httpResponse.readBytes()
+    }
+
+    override suspend fun updateUserAvatar(username: String, avatar: ByteArray) {
+        // 更换头像
+        client.put<String>("${UserService.EndPoint.UpdateUserAvatar.url}?username=$username"){
+            body = avatar
+            headers  {
+                append(HttpHeaders.ContentType, "image/png")
+            }
+        }
+        Log.d("updateUserAvatar","123456")
     }
 
 }

@@ -64,11 +64,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // 更新帖子点赞数
     fun updatePostZan(id: String, isIncrease: Boolean) {
         viewModelScope.launch {
             postService.updatePostZan(id,isIncrease)
         }
     }
+
     fun downLoadImageByAuthor(index: Int, author: String){
         viewModelScope.launch {
             _authorAvatar[index] = postService.downLoadImageByAuthor(author)

@@ -54,7 +54,7 @@ class MineViewModel @Inject constructor(
             _zanCount.value = user.zanCount.toString()
             _commentCount.value = user.commentCount.toString()
             Log.d("------------------",user.avatar!!)
-            _userAvatar.value = userService.downLoadImageByAuthor(user.avatar!!)
+            _userAvatar.value = userService.downLoadImageByAuthor(user.avatar)
         }
     }
 
@@ -62,13 +62,23 @@ class MineViewModel @Inject constructor(
         _signText.value = text
     }
 
+    fun onAvatarChange(avatar: ByteArray) {
+        _userAvatar.value = avatar
+    }
+
+    // 更新用户个性签名
     fun updateUserSignText() {
-        Log.d("=========","a1sd23sa1d")
         if (signText.value.isNotEmpty()){
-            Log.d("=========","adas")
             viewModelScope.launch {
                 userService.updateSignByName(_username.value, _signText.value)
             }
         }
     }
+
+    fun updateUserAvatar(username: String, avatar: ByteArray) {
+        viewModelScope.launch {
+            userService.updateUserAvatar(username, avatar)
+        }
+    }
+
 }

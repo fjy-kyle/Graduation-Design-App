@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,9 +34,6 @@ import coil.request.ImageRequest
 import com.example.data.model.Post
 import com.example.socialapplication.domain.model.Comment
 import com.example.socialapplication.main.SocialApp
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun PostDetailScreen(
@@ -44,6 +41,14 @@ fun PostDetailScreen(
     post: Post,
     navController: NavController
 ) {
+    var zanClickState by remember {
+        mutableStateOf(false)
+    }
+
+    var caiClickState by remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(key1 = true){
         viewModel.downLoadImageByAuthor(post.authorAvatar) // 下载文章作者头像
         viewModel.getCommentByPostId(post.id) // 获取评论区数据
@@ -105,7 +110,7 @@ fun PostDetailScreen(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = post.author,
+                                        text = post.authorNickname,
                                         fontSize = 12.sp)
                                     Text(
                                         modifier = Modifier.padding(top=5.dp),
@@ -113,7 +118,53 @@ fun PostDetailScreen(
                                     )
                                 }
                             }
-                            Text(text = post.content, style = MaterialTheme.typography.body2)
+                            Text(text = post.content, style = MaterialTheme.typography.body1)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable {
+                                                zanClickState = !zanClickState
+                                                viewModel.updatePostZan(post.id, zanClickState)
+                                            },
+                                        imageVector = Icons.Default.ThumbUp,
+                                        contentDescription = "赞",
+                                        tint = if (zanClickState) {
+                                            MaterialTheme.colors.primary
+                                        } else {
+                                            Color.Gray
+                                        }
+                                    )
+                                    Text(
+                                        modifier = Modifier.padding(5.dp),
+                                        color = if (zanClickState) MaterialTheme.colors.primary else Color.Gray,
+                                        text = if (zanClickState) {
+                                            (post.zan+1).toString()
+                                        } else {
+                                            if (post.zan != 0) (post.zan).toString() else "赞"
+                                        }
+                                    )
+                                }
+                                Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .size(20.dp)
+                                            .clickable { caiClickState = !caiClickState },
+                                        imageVector = Icons.Default.ThumbDown,
+                                        contentDescription = "踩",
+                                        tint = if(caiClickState) MaterialTheme.colors.primary else Color.Gray
+                                    )
+                                    Text(
+                                        modifier = Modifier.padding(5.dp),
+                                        color = Color.Gray,
+                                        text = "踩"
+                                    )
+                                }
+                            }
                         }
                         Divider()
                         Text(text = "评论", fontSize = 20.sp, fontStyle = FontStyle.Italic)
@@ -167,12 +218,12 @@ fun CommentItem(viewModel: PostDetailViewModel, index: Int, comment:Comment){
         ) {
             Text(
                 modifier = Modifier.padding(3.dp),
-                text = comment.author,
+                text = comment.authorNickname,
                 style = MaterialTheme.typography.subtitle2)
             Text(modifier = Modifier.padding(3.dp),
                 text = comment.formattedTime,
                 fontSize = 10.sp)
-            Text(text = comment.content )
+            Text(text = comment.content , style = MaterialTheme.typography.body2)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -180,11 +231,12 @@ fun CommentItem(viewModel: PostDetailViewModel, index: Int, comment:Comment){
             ){
                 Icon(
                     imageVector = Icons.Default.ThumbUp,
-                    modifier = Modifier.padding(end = 5.dp)
+                    modifier = Modifier
+                        .padding(end = 5.dp)
                         .size(20.dp)
                         .clickable {
                             clickState = !clickState
-                            viewModel.updatePostZan(comment.id, clickState)
+                            viewModel.updateCommentZan(comment.id, clickState)
                         },
                     contentDescription = "点赞",
                     tint = if (clickState) {
@@ -197,8 +249,10 @@ fun CommentItem(viewModel: PostDetailViewModel, index: Int, comment:Comment){
                     text  = if (clickState) {
                         (comment.zan+1).toString()
                     } else {
-                        (comment.zan).toString()
-                    })
+                        if (comment.zan != 0) (comment.zan).toString() else "赞"
+                    },
+                    color = if (clickState) MaterialTheme.colors.primary else Color.Gray
+                )
             }
         }
     }

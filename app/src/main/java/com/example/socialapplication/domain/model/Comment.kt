@@ -9,4 +9,5 @@ data class Comment(
     val postId :String = "", // 属于哪个帖子
     val zan : Int = 0 ,// 获赞数
     val authorAvatar : String = "", // 评论作者头像
+    val authorNickname: String = "",
 )

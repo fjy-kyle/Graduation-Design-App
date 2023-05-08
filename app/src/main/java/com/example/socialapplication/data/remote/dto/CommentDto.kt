@@ -16,6 +16,7 @@ data class CommentDto(
     val postId :String = "", // 属于哪个帖子
     val zan : Int = 0 ,// 获赞数
     val authorAvatar :String = "", // 评论作者头像
+    val authorNickname: String = "",
 ) {
     fun toComment() : Comment {
         val data = Date(timestamp)
@@ -27,7 +28,8 @@ data class CommentDto(
             formattedTime = formattedDate,
             postId = postId,
             zan = zan,
-            authorAvatar = authorAvatar
+            authorAvatar = authorAvatar,
+            authorNickname = authorNickname
         )
     }
 }

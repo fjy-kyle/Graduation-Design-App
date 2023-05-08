@@ -77,7 +77,7 @@ fun LoginScreen(
             // 根据Uri获得bitmap
             val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(it))
             // 进行压缩
-            val newBitmap = SocialApp.compressBitmap(bitmap,100.0,100.0)
+            val newBitmap = SocialApp.compressBitmap(bitmap,150.0,150.0)
 
             val stream = ByteArrayOutputStream()
             newBitmap!!.compress(Bitmap.CompressFormat.PNG, 100 ,stream)

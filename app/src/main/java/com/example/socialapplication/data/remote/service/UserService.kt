@@ -26,6 +26,8 @@ interface UserService {
 
     suspend fun updateSignByName(name: String, sign: String)
 
+    suspend fun updateUserAvatar(username: String, avatar: ByteArray)
+
     companion object {
         private const val HOST = "47.108.253.91"
         private const val PORT = "8008"
@@ -37,6 +39,6 @@ interface UserService {
         object UserRegister: EndPoint("$BASE_URL/user/register")
         object GetUserByName: EndPoint("$BASE_URL/user/findByName")
         object UpdateSignByName: EndPoint("$BASE_URL/user/updateSign")
-        object UserUpload: EndPoint("$BASE_URL/upload") // 更换头像，待用
+        object UpdateUserAvatar: EndPoint("$BASE_URL/user/updateAvatar") // 更换头像，待用
     }
 }

@@ -14,4 +14,5 @@ data class Post (
     val zan: Int = 0,
     val commentCount: Int = 0,
     val authorAvatar :String = "",
+    val authorNickname: String = "",
 )

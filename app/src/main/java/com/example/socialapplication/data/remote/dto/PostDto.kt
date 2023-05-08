@@ -16,6 +16,7 @@ data class PostDto (
     val zan: Int = 0,
     val commentCount: Int = 0,
     val authorAvatar :String = "",
+    val authorNickname: String = "",
     val id : String
 ) {
     fun toPost(): Post {
@@ -29,7 +30,8 @@ data class PostDto (
             formattedTime = formattedDate,
             zan = zan,
             commentCount = commentCount,
-            authorAvatar = authorAvatar
+            authorAvatar = authorAvatar,
+            authorNickname = authorNickname
         )
     }
 }

@@ -120,6 +120,7 @@ fun HomeScreen(
                     ) {
                         IconButton(onClick = {
                             viewModel.findPostsByTitle(viewModel.searchText.value)
+                            viewModel.onSearchTextChange("")
                         }) {
                             Icon(Icons.Default.Search, contentDescription = "search",
                                 modifier = Modifier
@@ -222,7 +223,7 @@ fun PostItem(
                 ) {
                     Text(
                         modifier = Modifier.padding(5.dp),
-                        text = post.author,
+                        text = post.authorNickname,
                         fontFamily = FontFamily.Default
                     )
                     Text(
@@ -243,7 +244,6 @@ fun PostItem(
                 )
             }
             Row(
-
             ) {
                 Row(
                     modifier = Modifier.weight(1f),
@@ -266,7 +266,8 @@ fun PostItem(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(modifier = Modifier
+                    Icon(
+                        modifier = Modifier
                         .clickable {
                             clickState = !clickState
                             viewModel.updatePostZan(post.id, clickState)
@@ -281,11 +282,11 @@ fun PostItem(
                     )
                     Text(
                         modifier = Modifier.padding(5.dp),
-                        color = Color.Gray,
+                        color = if (clickState) MaterialTheme.colors.primary else Color.Gray,
                         text = if (clickState) {
                             (post.zan+1).toString()
                         } else {
-                            (post.zan).toString()
+                            if (post.zan != 0) (post.zan).toString() else "赞"
                         }
                     )
 

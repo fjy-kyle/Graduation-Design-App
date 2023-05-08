@@ -2,8 +2,13 @@ package com.example.socialapplication.presentation.home.mine
 
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.expandHorizontally
@@ -40,7 +45,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.socialapplication.domain.model.User
+import com.example.socialapplication.main.SocialApp
 import com.example.socialapplication.main.SocialApp.Companion.context
+import java.io.ByteArrayOutputStream
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -49,6 +56,29 @@ fun MineScreen(
     onNavigate: (String)->Unit,
     user: User,
 ) {
+
+    // 打开系统相册
+    val photoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ){
+        if (it != null) {
+            Log.d("PhotoPicker","Selected URI: $it")
+            // 根据Uri获得bitmap
+            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(it))
+            // 进行压缩
+            val newBitmap = SocialApp.compressBitmap(bitmap,150.0,150.0)
+
+            val stream = ByteArrayOutputStream()
+            newBitmap!!.compress(Bitmap.CompressFormat.PNG, 100 ,stream)
+            // 修改当前用户的头像，再转成byteArray类型，将新头像撒上传至服务器
+            viewModel.updateUserAvatar(user.username, stream.toByteArray())
+            viewModel.onAvatarChange(stream.toByteArray())
+            Log.d("PhotoPicker","Selected Bitmap: ${bitmap.height}")
+        } else {
+            Log.d("PhotoPicker","No media selected")
+        }
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner) {
         Log.d("onStart","you were in DisposableEffect")
@@ -81,6 +111,7 @@ fun MineScreen(
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
                 RoundImage(
+                    photoPicker = photoPicker,
                     image = viewModel.userAvatar.value,
                     modifier = Modifier
                         .size(100.dp)
@@ -104,10 +135,11 @@ fun TopAppBar(
     onNavigate: (String)->Unit,
 ){
     TopAppBar(
+        //标题
         title = {
-            //标题
             Text(text = "我的",
                 modifier = Modifier
+                    .padding(start = 30.dp)
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.Center),
                 textAlign = TextAlign.Center
@@ -123,6 +155,7 @@ fun TopAppBar(
 }
 @Composable
 fun RoundImage(
+    photoPicker: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     image: ByteArray,
     modifier: Modifier  = Modifier
 ){
@@ -134,7 +167,14 @@ fun RoundImage(
                 shape = CircleShape
             )
             .padding(3.dp)
-            .clip(CircleShape),
+            .clip(CircleShape)
+            .clickable {
+                photoPicker.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            },
         model = ImageRequest.Builder(LocalContext.current)
             .data(image)
             .crossfade(true)
@@ -187,11 +227,12 @@ fun ProfileDescription(
 ){
     val letterSpacing = 0.5.sp
     val lineHeight = 20.sp
+
     var enabled by remember {
         mutableStateOf(false)
     }
-
-    Column(modifier = Modifier
+    Column(
+        modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 20.dp)
     ) {

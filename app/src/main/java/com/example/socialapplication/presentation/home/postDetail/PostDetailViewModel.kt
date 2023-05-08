@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.socialapplication.data.remote.dto.CommentDto
 import com.example.socialapplication.data.remote.service.CommentService
+import com.example.socialapplication.data.remote.service.PostService
 import com.example.socialapplication.domain.model.Comment
 import com.example.socialapplication.domain.model.User
 import com.example.socialapplication.presentation.home.home.PostState
@@ -26,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostDetailViewModel @Inject constructor(
-    private val commentService: CommentService
+    private val commentService: CommentService,
+    private val postService: PostService
 ): ViewModel() {
 
     // 评论区头像数据
@@ -97,10 +99,15 @@ class PostDetailViewModel @Inject constructor(
     }
 
     // 更新评论的点赞数
-    fun updatePostZan(id: String, isIncrease: Boolean) {
+    fun updateCommentZan(id: String, isIncrease: Boolean) {
         viewModelScope.launch {
             commentService.updateCommentZan(id, isIncrease)
         }
     }
 
+    fun updatePostZan(id: String, isIncrease: Boolean) {
+        viewModelScope.launch {
+            postService.updatePostZan(id,isIncrease)
+        }
+    }
 }
