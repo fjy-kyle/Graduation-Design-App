@@ -193,7 +193,7 @@ fun PostItem(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(4.dp)
             .clickable {
                 // 跳转到详情页面实现-------------------------------------------------------------------------------------------
                 val json = Json.encodeToString(post)
@@ -244,14 +244,16 @@ fun PostItem(
                 )
             }
             Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
                 Row(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.padding(horizontal = 5.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        modifier = Modifier,
+                        modifier = Modifier.size(20.dp),
                         imageVector = Icons.Default.Pending,
                         contentDescription = "",
                         tint = Color.Gray)
@@ -262,15 +264,16 @@ fun PostItem(
                     )
                 }
                 Row(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.padding(horizontal = 5.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         modifier = Modifier
-                        .clickable {
-                            clickState = !clickState
-                            viewModel.updatePostZan(post.id, clickState)
+                            .size(20.dp)
+                            .clickable {
+                                clickState = !clickState
+                                viewModel.updatePostZan(post.id, clickState)
                         },
                         imageVector = Icons.Default.ThumbUp,
                         contentDescription = "",

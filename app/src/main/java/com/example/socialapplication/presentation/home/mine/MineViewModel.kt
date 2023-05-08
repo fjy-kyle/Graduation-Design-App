@@ -53,8 +53,7 @@ class MineViewModel @Inject constructor(
             _signText.value = user.sign
             _zanCount.value = user.zanCount.toString()
             _commentCount.value = user.commentCount.toString()
-            Log.d("------------------",user.avatar!!)
-            _userAvatar.value = userService.downLoadImageByAuthor(user.avatar)
+            _userAvatar.value = userService.downLoadImageByAuthor(user.avatar!!)
         }
     }
 

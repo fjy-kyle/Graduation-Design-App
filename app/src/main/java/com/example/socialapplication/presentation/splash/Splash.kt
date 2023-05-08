@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +24,6 @@ import com.example.socialapplication.presentation.splash.SplashViewModel
 import com.example.socialapplication.ui.theme.Purple700
 import com.example.socialapplication.ui.theme.SocialApplicationTheme
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun AnimatedSplashScreen(

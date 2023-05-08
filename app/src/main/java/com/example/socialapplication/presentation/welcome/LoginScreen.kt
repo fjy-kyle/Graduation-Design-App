@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -77,7 +78,7 @@ fun LoginScreen(
             // 根据Uri获得bitmap
             val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(it))
             // 进行压缩
-            val newBitmap = SocialApp.compressBitmap(bitmap,150.0,150.0)
+            val newBitmap = SocialApp.compressBitmap(bitmap,200.0,200.0)
 
             val stream = ByteArrayOutputStream()
             newBitmap!!.compress(Bitmap.CompressFormat.PNG, 100 ,stream)
@@ -260,141 +261,140 @@ fun LoginScreen(
                                 .padding(20.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ){
-                            AsyncImage(
-                                modifier = Modifier
-                                    .size(80.dp)
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        photoPicker.launch(
-                                            PickVisualMediaRequest(
-                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            photoPicker.launch(
+                                                PickVisualMediaRequest(
+                                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                                )
                                             )
+                                        },
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(
+                                            if (viewModel.registerAvatarByteArray.value.contentEquals(byteArrayOf(0))){
+                                                R.drawable.default_avatar // 默认头像
+                                            }else {
+                                                viewModel.registerAvatarByteArray.value // 选择后的头像
+                                            }
                                         )
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Avatar Image",
+                                    contentScale = ContentScale.Crop
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(16.dp),
+                                    value = viewModel.registerUsernameText.value,
+                                    onValueChange = viewModel::onRegisterUsernameChange,
+                                    placeholder = {
+                                        Text(text = "长度2~10，由中英文或数字组成", fontSize = 12.sp)
                                     },
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(
-                                        if (viewModel.registerAvatarByteArray.value.contentEquals(byteArrayOf(0))){
-                                            R.drawable.default_avatar // 默认头像
-                                        }else {
-                                            viewModel.registerAvatarByteArray.value // 选择后的头像
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp),
+                                    trailingIcon = {
+                                        if (viewModel.registerUsernameText.value.isNotBlank()) {
+                                            IconButton(onClick = { viewModel.onRegisterUsernameChange("")  }) {
+                                                Icon(imageVector = Icons.Default.Clear, contentDescription = "")
+                                            }
                                         }
-                                    )
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "Avatar Image",
-                                contentScale = ContentScale.Crop
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedTextField(
-                                singleLine = true,
-                                shape = RoundedCornerShape(16.dp),
-                                value = viewModel.registerUsernameText.value,
-                                onValueChange = viewModel::onRegisterUsernameChange,
-                                placeholder = {
-                                    Text(text = "长度2~10，由中英文或数字组成", fontSize = 12.sp)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp),
-                                trailingIcon = {
-                                    if (viewModel.registerUsernameText.value.isNotBlank()) {
-                                        IconButton(onClick = { viewModel.onRegisterUsernameChange("")  }) {
-                                            Icon(imageVector = Icons.Default.Clear, contentDescription = "")
-                                        }
+                                    },
+                                    label = {Text("用户名")},
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colors.primary)
                                     }
-                                },
-                                label = {Text("用户名")},
-                                leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colors.primary)
-                                }
-                            )
+                                )
 
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedTextField(
-                                singleLine = true,
-                                shape = RoundedCornerShape(16.dp),
-                                value = viewModel.registerNicknameText.value,
-                                onValueChange = viewModel::onRegisterNicknameChange,
-                                trailingIcon = {
-                                    if (viewModel.registerNicknameText.value.isNotBlank()) {
-                                        IconButton(onClick = { viewModel.onRegisterNicknameChange("")  }) {
-                                            Icon(imageVector = Icons.Default.Clear, contentDescription = "")
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(16.dp),
+                                    value = viewModel.registerNicknameText.value,
+                                    onValueChange = viewModel::onRegisterNicknameChange,
+                                    trailingIcon = {
+                                        if (viewModel.registerNicknameText.value.isNotBlank()) {
+                                            IconButton(onClick = { viewModel.onRegisterNicknameChange("")  }) {
+                                                Icon(imageVector = Icons.Default.Clear, contentDescription = "")
+                                            }
                                         }
+                                    },
+                                    label = {Text("昵称")},
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp),
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Face, contentDescription = "", tint = MaterialTheme.colors.primary)
                                     }
-                                },
-                                label = {Text("昵称")},
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp),
-                                leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Face, contentDescription = "", tint = MaterialTheme.colors.primary)
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedTextField(
-                                singleLine = true,
-                                shape = RoundedCornerShape(16.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp),
-                                value = viewModel.registerPasswordText.value,
-                                onValueChange = viewModel::onRegisterPasswordChange,
-                                placeholder = {
-                                    Text(text = "8个字符或以上", fontSize = 12.sp)
-                                },
-                                trailingIcon = {
-                                    IconButton(onClick = { isPasswordVisible2 = !isPasswordVisible2 }) {
-                                        Icon(imageVector = if (isPasswordVisible2)Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                            contentDescription = "Password Toggle")
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp),
+                                    value = viewModel.registerPasswordText.value,
+                                    onValueChange = viewModel::onRegisterPasswordChange,
+                                    placeholder = {
+                                        Text(text = "8个字符或以上", fontSize = 12.sp)
+                                    },
+                                    trailingIcon = {
+                                        IconButton(onClick = { isPasswordVisible2 = !isPasswordVisible2 }) {
+                                            Icon(imageVector = if (isPasswordVisible2)Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                                contentDescription = "Password Toggle")
+                                        }
+                                    },
+                                    label = {Text("密码")},
+                                    visualTransformation = if (isPasswordVisible2) VisualTransformation.None else PasswordVisualTransformation(),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.None),
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Lock, contentDescription = "", tint = MaterialTheme.colors.primary)
                                     }
-                                },
-                                label = {Text("密码")},
-                                visualTransformation = if (isPasswordVisible2) VisualTransformation.None else PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.None),
-                                leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Lock, contentDescription = "", tint = MaterialTheme.colors.primary)
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedTextField(
-                                shape = RoundedCornerShape(16.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 10.dp, end = 10.dp),
-                                value = viewModel.registerPasswordConfirmText.value,
-                                onValueChange = viewModel::onRegisterPasswordConfirmChange,
-                                label = {Text("确认密码")},
-                                visualTransformation = PasswordVisualTransformation(),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.None),
-                                singleLine = true,
-                                leadingIcon = {
-                                    Icon(imageVector = Icons.Default.Password, contentDescription = "", tint = MaterialTheme.colors.primary)
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(13.dp))
-                            Button(
-                                onClick = viewModel::onRegisterClick,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                                    .padding(start = 10.dp, end = 10.dp),
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Row() {
-                                    Text(text = "注册",modifier = Modifier.padding(top=2.dp))
-                                    Icon(imageVector = Icons.Default.Launch, contentDescription = "")
-                                }
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 10.dp, end = 10.dp),
+                                    value = viewModel.registerPasswordConfirmText.value,
+                                    onValueChange = viewModel::onRegisterPasswordConfirmChange,
+                                    label = {Text("确认密码")},
+                                    visualTransformation = PasswordVisualTransformation(),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.None),
+                                    singleLine = true,
+                                    leadingIcon = {
+                                        Icon(imageVector = Icons.Default.Password, contentDescription = "", tint = MaterialTheme.colors.primary)
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(13.dp))
+                                Button(
+                                    onClick = viewModel::onRegisterClick,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(50.dp)
+                                        .padding(start = 10.dp, end = 10.dp),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Row() {
+                                        Text(text = "注册",modifier = Modifier.padding(top=2.dp))
+                                        Icon(imageVector = Icons.Default.Launch, contentDescription = "")
+                                    }
 
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            TextButton(onClick = { isVisible = !isVisible }) {
-                                Text(text = "去登录")
-                            }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                TextButton(onClick = { isVisible = !isVisible }) {
+                                    Text(text = "去登录")
+                                }
                         }
                     }
                 }
             }
-
         }
     }
 }
