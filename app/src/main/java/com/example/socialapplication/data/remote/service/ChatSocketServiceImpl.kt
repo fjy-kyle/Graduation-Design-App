@@ -61,15 +61,7 @@ class ChatSocketServiceImpl(
         }
     }
 
-    override suspend fun downLoadSenderAvatar(avatar: String): ByteArray {
-        Log.d("Here is a Error", avatar)
-        val httpResponse: HttpResponse = client.get(avatar) {
-            onDownload { bytesSentTotal, contentLength ->
-                println("Received $bytesSentTotal bytes from $contentLength")
-            }
-        }
-        return httpResponse.readBytes()
-    }
+
 
     override suspend fun closeSession() {
         socket?.close()

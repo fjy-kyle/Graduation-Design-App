@@ -1,6 +1,5 @@
 package com.example.socialapplication.data.remote.service
 
-import android.util.Log
 import com.example.data.model.Post
 import com.example.socialapplication.data.remote.dto.BaseModel
 import com.example.socialapplication.data.remote.dto.PostDto
@@ -10,6 +9,7 @@ import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+
 
 class PostServiceImpl(
     private val client: HttpClient
@@ -49,7 +49,7 @@ class PostServiceImpl(
     ) :  Resource<Any>{
         val response= client.post<BaseModel<PostDto>>(
             PostService.EndPoint.InsertPost.url +
-                "?title=$title&content=$content&author=$author"
+                "?title=$title&author=$author"
         ) {
             body = content
             headers{
@@ -62,7 +62,7 @@ class PostServiceImpl(
             Resource.Error(message = response.errorMsg!!)
         }
     }
-
+    
     override suspend fun findPostById(id: String): Resource<Any> {
         val response = client.get<BaseModel<PostDto>>(
             "${PostService.EndPoint.FindPostById.url}?id=$id"

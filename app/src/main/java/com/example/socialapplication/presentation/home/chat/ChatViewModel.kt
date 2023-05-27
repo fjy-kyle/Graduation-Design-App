@@ -40,11 +40,7 @@ class ChatViewModel @Inject constructor(
     private val _senderState = mutableStateMapOf<Int,ByteArray>()
     val senderState : SnapshotStateMap<Int,ByteArray> = _senderState
 
-    fun downLoadSenderAvatar(index: Int, avatar: String) {
-        viewModelScope.launch {
-            _senderState[index] = chatSocketService.downLoadSenderAvatar(avatar)
-        }
-    }
+
 
     // 建立websocket长连接
     fun connectToChat() {

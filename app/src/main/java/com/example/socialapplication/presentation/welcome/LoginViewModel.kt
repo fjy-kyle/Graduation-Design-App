@@ -25,6 +25,9 @@ import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 
+/**
+ * 用户登录与注册页面功能逻辑实现
+ */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userService: UserService
@@ -130,7 +133,6 @@ class LoginViewModel @Inject constructor(
     }
 
 
-
     fun onRegisterClick(){
             viewModelScope.launch {
                 if (isRegisterFormValid) {
@@ -151,6 +153,7 @@ class LoginViewModel @Inject constructor(
             }
         }
 
+    // 检查当前设备是否有用户登陆过
     fun checkLastUser() {
         if (sharedPreferences.getString("username","") != null) {
             _loginUsernameText.value = sharedPreferences.getString("username","")!!
@@ -158,6 +161,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    // 保存当前用户用户名与密码
     private fun saveUserInfo(){
         sharedPreferences.edit().apply{
             putString("username", _loginUsernameText.value)

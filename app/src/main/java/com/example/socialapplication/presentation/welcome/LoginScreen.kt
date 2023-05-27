@@ -14,7 +14,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,6 +49,7 @@ import com.example.socialapplication.ui.theme.Purple200
 import com.example.socialapplication.ui.theme.Purple500
 import kotlinx.coroutines.flow.collectLatest
 import java.io.ByteArrayOutputStream
+
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -140,7 +140,7 @@ fun LoginScreen(
                 contentDescription = "",
                 modifier = Modifier
                     .weight(1f)
-                    .size(300.dp),
+                    .size(350.dp),
                 colorFilter = ColorFilter.tint(Color.White)
 
             )
@@ -163,6 +163,7 @@ fun LoginScreen(
                 }
             ) {
                 if (it) {
+                    // 登录卡
                     Card(
                         modifier = Modifier
                             .fillMaxSize()
@@ -249,6 +250,7 @@ fun LoginScreen(
                         }
                     }
                 } else {
+                    // 注册卡
                     Card(
                         modifier = Modifier
                             .fillMaxSize()

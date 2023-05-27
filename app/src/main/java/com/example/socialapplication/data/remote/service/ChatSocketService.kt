@@ -17,7 +17,7 @@ interface ChatSocketService {
 
     suspend fun closeSession()
 
-    suspend fun downLoadSenderAvatar(avatar: String): ByteArray
+
 
     companion object {
         private const val HOST = "47.108.253.91"

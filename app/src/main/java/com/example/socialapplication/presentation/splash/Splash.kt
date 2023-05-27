@@ -55,7 +55,7 @@ fun AnimatedSplashScreen(
             navController.navigate("login_screen")
         }
 
-    }
+ }
     Splash(alpha = alphaAnim.value)
 }
 
